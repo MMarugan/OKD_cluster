@@ -1,5 +1,5 @@
 ---
 devops:
-  hostname: okdcluster
-  box: 'debian/buster64'
+  hostname: master
+  box: 'fedora/33-cloud-base'
   ip: '192.168.33.53'
