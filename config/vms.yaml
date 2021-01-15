@@ -1,0 +1,18 @@
+---
+nodes:
+  - hostname: master
+    box: 'centos/7'
+    ip: '192.168.50.1'
+    memory: '2048'
+    config_script: 'provision/shell/install_master.sh'
+  - hostname: infra
+    box: 'centos/7'
+    ip: '192.168.50.2'
+    memory: '2048'
+    config_script: 'provision/shell/install_infra.sh'
+  - hostname: compute
+    box: 'centos/7'
+    ip: '192.168.50.3'
+    memory: '2048'
+    config_script: 'provision/shell/install_compute.sh'
+
