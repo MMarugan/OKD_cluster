@@ -18,7 +18,7 @@ ssh-keygen -t rsa \
 # Install the Extra Packages for Enterprise Linux (EPEL) repository
 rpm -q epel-release-7-13 -eq || \
 yum -y install \
-    https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm   
+    https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 sed -i -e "s/^enabled=1/enabled=0/" /etc/yum.repos.d/epel.repo
 
 # Install ansible 2.4.3.0
@@ -30,4 +30,6 @@ yum -y install \
 rpm -q ansible-doc -eq || \
 yum -y install \
     https://cbs.centos.org/kojifiles/packages/ansible/${ANSIBLE_VERSION}/1.el7/noarch/ansible-doc-${ANSIBLE_VERSION}-1.el7.noarch.rpm
+
+yum install -y docker-1.13.1 && systemctl enable --now docker
 
