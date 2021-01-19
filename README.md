@@ -5,7 +5,7 @@ Installation steps are based on this [Spirited Engineering post](https://spirite
 # Validated with:  
 - Debian 10.7  
 - Linux 4.19.0-13-amd64  
-- Virtual Box 6.1.16-140961~Debian~buster  
+- Virtual Box 6.1.16-140961\~Debian\~buster  
 - Vagrant 1:2.2.10  
 
 # VMs deployment:
