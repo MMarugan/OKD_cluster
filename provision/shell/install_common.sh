@@ -51,13 +51,16 @@ cat /vagrant/config/ansible-hosts > /etc/ansible/hosts
 
 # Set a root password for http
 mkdir -p /etc/origin/master
-echo "okdpass123" | htpasswd -i -c  /etc/origin/master/htpasswd root
+echo "okdroot123" | htpasswd -i -c  /etc/origin/master/htpasswd root
 
-# dnsmasq installation and configuration
-yum install -y dnsmasq #dnsmasq-utils
-[[ ! -f /etc/dnsmasq.conf.bk ]] && mv /etc/dnsmasq.conf /etc/dnsmasq.conf.bk
-cat /vagrant/config/dnsmasq.conf> /etc/dnsmasq.conf
-systemctl restart dnsmasq.service
-echo "# Local dnsmasq configuration" > /etc/resolv.conf
-echo "nameserver 127.0.0.1" >> /etc/resolv.conf
+# Set a password for admin user
+echo "okdadmin123" | htpasswd -i -c  /etc/origin/master/htpasswd admin
+
+# # dnsmasq installation and configuration
+# yum install -y dnsmasq #dnsmasq-utils
+# [[ ! -f /etc/dnsmasq.conf.bk ]] && mv /etc/dnsmasq.conf /etc/dnsmasq.conf.bk
+# cat /vagrant/config/dnsmasq.conf> /etc/dnsmasq.conf
+# systemctl restart dnsmasq.service
+# echo "# Local dnsmasq configuration" > /etc/resolv.conf
+# echo "nameserver 127.0.0.1" >> /etc/resolv.conf
 
