@@ -30,7 +30,7 @@ ansible all -m ping
 
 # Execute ansible to configure and deploy openshift
 cd /usr/share/ansible/openshift-ansible/playbooks/
-ansible-playbook prerequisites.yml
+ansible-playbook prerequisites.yml && \
 ansible-playbook deploy_cluster.yml
 
 # Set a password for admin user
