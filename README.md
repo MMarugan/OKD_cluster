@@ -9,18 +9,16 @@ Installation steps are based on this [Spirited Engineering post](https://spirite
 - Vagrant 1:2.2.10  
 
 # VMs deployment:
-
 Execute from virtualbox host server:
-
-    host$ vagrant up  
-
+````
+    host$ vagrant up
+````
 It takes long time to set up the cluster (around 20 minutes). After this, check the openshift cluster nodes with:
 
 ## Webconsole access:
-
 Add to the hosts file the following entry (Update it with the corresponding one if it has been changed in [config file](/config/vms.yaml) file for master node)
 ````
-    192.168.50.11 master.okd.local
+192.168.50.11 master.okd.local
 ````
 to access to the web console using the following URL:
 
@@ -29,33 +27,32 @@ to access to the web console using the following URL:
 - (NOTE I) A self-signed certificate warning may appears in the browser and it has to be accepted.  
 - (NOTE II) Default credentials provisioned in these deployment scripts are ````admin / okdadmin123````)  
 
-
 # Troubleshooting:
 - ## VMs access:
 ````
-      host$ vagrant ssh master
-      host$ vagrant ssh infra
-      host$ vagrant ssh compute
+host$ vagrant ssh master
+host$ vagrant ssh infra
+host$ vagrant ssh compute
 ````
 - ## Ansible connectivity tests (from master):
 ````
-      master$ sudo su -
-      master# ansible all -m ping
+master$ sudo su -
+master# ansible all -m ping
 ````
 - ## Manual ansible openshift deployment execution (from master):
 ````
-      master# cd /usr/share/ansible/openshift-ansible/playbooks/
-      master# ansible-playbook prerequisites.yml
-      master# ansible-playbook deploy_cluster.yml
+master# cd /usr/share/ansible/openshift-ansible/playbooks/
+master# ansible-playbook prerequisites.yml
+master# ansible-playbook deploy_cluster.yml
 ````
 - ## Check openshift nodes (from master)  
 
 ````
-      master# oc get nodes
+master# oc get nodes
 
-      NAME      STATUS    ROLES     AGE       VERSION  
-      compute   Ready     compute   23m       v1.9.1+a0ce1bc657  
-      infra     Ready     <none>    23m       v1.9.1+a0ce1bc657  
-      master    Ready     master    23m       v1.9.1+a0ce1bc657  
+NAME      STATUS    ROLES     AGE       VERSION  
+compute   Ready     compute   23m       v1.9.1+a0ce1bc657  
+infra     Ready     <none>    23m       v1.9.1+a0ce1bc657  
+master    Ready     master    23m       v1.9.1+a0ce1bc657  
 ````
 
