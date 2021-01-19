@@ -58,6 +58,6 @@ And access to the web console using the following URL:
 
 [https://master:8443/](https://master:8443/)
 
-(NOTE) A self-signed certificate warning may appears in the browser and it has to be accepted.
-
+(NOTE I) A self-signed certificate warning may appears in the browser and it has to be accepted.
+(NOTE II) Default credentials provisioned are admin / admin)
 
