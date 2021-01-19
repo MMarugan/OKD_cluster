@@ -11,7 +11,7 @@ Installation steps are based on this [Spirited Engineering post](https://spirite
 # VMs deployment:
 Execute from virtualbox host server:
 ````
-    host$ vagrant up
+host$ vagrant up
 ````
 It takes long time to set up the cluster (around 20 minutes). After this, check the openshift cluster nodes with:
 
