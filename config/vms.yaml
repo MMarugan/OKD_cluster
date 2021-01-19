@@ -2,20 +2,21 @@
 nodes:
   - hostname: master
     box: 'centos/7'
-    ip: '192.168.50.1'
+    ip: '192.168.50.11'
     memory: '2048'
     vCPUs: '1'
     config_script: 'provision/shell/install_master.sh'
   - hostname: infra
     box: 'centos/7'
-    ip: '192.168.50.2'
+    ip: '192.168.50.12'
     memory: '2048'
     vCPUs: '1'
     config_script: 'provision/shell/install_infra.sh'
   - hostname: compute
     box: 'centos/7'
-    ip: '192.168.50.3'
+    ip: '192.168.50.13'
     memory: '2048'
     vCPUs: '1'
     config_script: 'provision/shell/install_compute.sh'
-
+okd:
+  domain: 'okd.local'

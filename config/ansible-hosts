@@ -1,0 +1,26 @@
+[OSEv3:children]
+masters
+nodes
+etcd
+
+[OSEv3:vars]
+openshift_deployment_type=origin
+os_firewall_use_firewalld=True
+ansible_ssh_user=root
+openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
+openshift_pkg_version='-3.9.0'
+openshift_master_default_subdomain=apps.okd.local
+openshift_disable_check=disk_availability,memory_availability
+openshift_ip=192.168.50.11
+openshift_ip_check=false
+
+[masters]
+master.okd.local
+
+[nodes]
+master.okd.local
+infra.okd.local openshift_node_labels="{'region':'infra','zone':'default'}"
+compute.okd.local openshift_node_labels="{'region':'primary','zone':'east'}"
+
+[etcd]
+master.okd.local
