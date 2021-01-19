@@ -23,7 +23,7 @@ Vagrant.configure('2') do |config|
   vms_config['nodes'].each do |node|
     config.vm.define node['hostname'] do |n|
       n.vm.box      = node['box']
-      n.vm.hostname = node['hostname']
+      n.vm.hostname = node['hostname'] + '.' + vms_config['okd']['domain']
       n.vm.network :private_network, ip: node['ip']
 
       n.vm.provider :virtualbox do |vb|
@@ -31,16 +31,16 @@ Vagrant.configure('2') do |config|
         vb.cpus = node['vCPUs']
       end
 
+      n.vm.provision :hosts do |p|
+        vms_config['nodes'].each do |entry|
+          p.add_host entry['ip'], [entry['hostname'], entry['hostname'] + '.' + vms_config['okd']['domain']]
+        end
+      end
       n.vm.provision :shell, path: 'provision/shell/install_common.sh'
       n.vm.provision :shell, inline: 'cat /vagrant/cluster_ssh_rsa.key > /root/.ssh/id_rsa'
       n.vm.provision :shell, inline: 'cat /vagrant/cluster_ssh_rsa.key.pub > /root/.ssh/id_rsa.pub'
       n.vm.provision :shell, inline: 'cat /vagrant/cluster_ssh_rsa.key.pub > /root/.ssh/authorized_keys'
       n.vm.provision :shell, path: node['config_script']
-      n.vm.provision :hosts do |p|
-        vms_config['nodes'].each do |entry|
-          p.add_host entry['ip'], [entry['hostname']]
-        end
-      end
     end
   end
 end
