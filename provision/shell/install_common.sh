@@ -13,10 +13,12 @@ yum -y install centos-release-openshift-origin39 wget git net-tools \
     bind-utils yum-utils iptables-services bridge-utils bash-completion \
     kexec-tools sos psacct vim git mlocate
 
-# Generates ssh key
+# Creates ssh directory and copies ssh-keys
 mkdir -p /root/.ssh
-ssh-keygen -t rsa \
-    -f /root/.ssh/id_rsa -N ''
+cat /vagrant/cluster_ssh_rsa.key > /root/.ssh/id_rsa
+cat /vagrant/cluster_ssh_rsa.key.pub > /root/.ssh/id_rsa.pub
+cat /vagrant/cluster_ssh_rsa.key.pub > /root/.ssh/authorized_keys
+chmod 600 /root/.ssh/*
 
 # Disables HostKey authentication
 cat /etc/ssh/ssh_config  | grep StrictHostKeyChecking | grep -v '^#'
@@ -31,36 +33,6 @@ yum -y install \
     https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 sed -i -e "s/^enabled=1/enabled=0/" /etc/yum.repos.d/epel.repo
 
-# Installs ansible 2.4.3.0
-ANSIBLE_VERSION="2.4.3.0"
-yum -y --enablerepo=epel install pyOpenSSL
-rpm -q ansible -eq || \
-yum -y install \
-    https://cbs.centos.org/kojifiles/packages/ansible/${ANSIBLE_VERSION}/1.el7/noarch/ansible-${ANSIBLE_VERSION}-1.el7.noarch.rpm
-rpm -q ansible-doc -eq || \
-yum -y install \
-    https://cbs.centos.org/kojifiles/packages/ansible/${ANSIBLE_VERSION}/1.el7/noarch/ansible-doc-${ANSIBLE_VERSION}-1.el7.noarch.rpm
-
 # Installs docker
 yum install -y docker-1.13.1 && systemctl enable --now docker
-
-# Installs ansible
-yum install -y openshift-ansible
-[[ ! -f /etc/ansible/hosts.bk ]] && mv /etc/ansible/hosts /etc/ansible/hosts.bk
-cat /vagrant/config/ansible-hosts > /etc/ansible/hosts
-
-# Set a root password for http
-mkdir -p /etc/origin/master
-echo "okdroot123" | htpasswd -i -c  /etc/origin/master/htpasswd root
-
-# Set a password for admin user
-echo "okdadmin123" | htpasswd -i -c  /etc/origin/master/htpasswd admin
-
-# # dnsmasq installation and configuration
-# yum install -y dnsmasq #dnsmasq-utils
-# [[ ! -f /etc/dnsmasq.conf.bk ]] && mv /etc/dnsmasq.conf /etc/dnsmasq.conf.bk
-# cat /vagrant/config/dnsmasq.conf> /etc/dnsmasq.conf
-# systemctl restart dnsmasq.service
-# echo "# Local dnsmasq configuration" > /etc/resolv.conf
-# echo "nameserver 127.0.0.1" >> /etc/resolv.conf
 
