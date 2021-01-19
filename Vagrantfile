@@ -33,14 +33,11 @@ Vagrant.configure('2') do |config|
 
       n.vm.provision :hosts do |p|
         vms_config['nodes'].each do |entry|
-          p.add_host entry['ip'], [entry['hostname'], entry['hostname'] + '.' + vms_config['okd']['domain']]
+          p.add_host entry['ip'], [entry['hostname'] + '.' + vms_config['okd']['domain']]
         end
       end
       n.vm.provision :shell, path: 'provision/shell/install_common.sh'
-      n.vm.provision :shell, inline: 'cat /vagrant/cluster_ssh_rsa.key > /root/.ssh/id_rsa'
-      n.vm.provision :shell, inline: 'cat /vagrant/cluster_ssh_rsa.key.pub > /root/.ssh/id_rsa.pub'
-      n.vm.provision :shell, inline: 'cat /vagrant/cluster_ssh_rsa.key.pub > /root/.ssh/authorized_keys'
-      n.vm.provision :shell, path: node['config_script']
+      n.vm.provision :shell, path: 'provision/shell/install_' + node['hostname'] + '.sh'
     end
   end
 end
