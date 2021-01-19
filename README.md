@@ -52,7 +52,7 @@ The output should be something similar to the following one:
 
 Add to the hosts file the following entry (Update with the corresponding master IP if it has been changed in [config file](/config/vms.yaml) file for master node):
 
-    192.168.50.11 master  
+    192.168.50.11 master.okd.local  
 
 And access to the web console using the following URL:
 

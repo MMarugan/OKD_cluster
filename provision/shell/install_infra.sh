@@ -2,4 +2,3 @@
 
 echo "Configuring infra node..."
 
-
