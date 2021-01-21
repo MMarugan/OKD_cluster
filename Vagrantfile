@@ -5,7 +5,7 @@ require 'yaml'
 case ARGV[0]
 when "provision", "up"
   if not (File.file?('./cluster_ssh_rsa.key'))
-    system("ssh-keygen -t rsa -f ./cluster_ssh_rsa.key -C node@okd -N ''")
+    system("ssh-keygen -t rsa -f ./cluster_ssh_rsa.key -C node@okd -N \"\"")
   else
     print "SSH key file already exists\n"
   end
