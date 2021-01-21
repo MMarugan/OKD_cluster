@@ -2,17 +2,31 @@
 Deploys OKD cluster using vagrant and virtualbox.  
 Installation steps are based on this [Spirited Engineering post](https://spiritedengineering.net/2019/08/05/put-red-hat-openshift-on-your-laptop-using-virtualbox-and-openshift-ansible/)
 
-# Validated with the following software versions:  
+# VMs deployment
+## Linux:
+### Validated with the following software versions:  
 - Debian 10.7  
 - Linux 4.19.0-13-amd64  
 - Virtual Box 6.1.16-140961\~Debian\~buster  
 - Vagrant 1:2.2.10  
 
-# VMs deployment:
 Execute from virtualbox host server:
 ````
-host$ vagrant up
+host:repo_path$ vagrant up
 ````
+
+## Windows:
+````
+repo_path> vagrant.exe up
+````
+### Validated with the following software versions:
+  - Vagrant [2.2.5](https://releases.hashicorp.com/vagrant/2.2.5/)  
+  - VirtualBox [6.0.4r128413](https://download.virtualbox.org/virtualbox/6.0.4/VirtualBox-6.0.4-128413-Win.exe)  
+  - VirtualBox [6.0.4r128413 Extension Pack](https://download.virtualbox.org/virtualbox/6.0.6/Oracle_VM_VirtualBox_Extension_Pack-6.0.6.vbox-extpack)  
+  
+NOTE: Some rsync problems have been detected with different Vagrant version than ````2.2.5````.  
+
+
 It takes long time to set up the cluster (around 20 minutes). After this, check the openshift cluster nodes with:
 
 ## Webconsole access:
