@@ -1,19 +1,31 @@
 ---
 nodes:
-  - hostname: infra
-    box: 'centos/7'
-    ip: '192.168.50.12'
+  - hostname: services
+    box: 'centos/8'
+    networks:
+      - ip: '192.168.61.210' # Internal
+      - ip: '192.168.60.210' # External
     memory: '2048'
     vCPUs: '1'
-  - hostname: compute
-    box: 'centos/7'
-    ip: '192.168.50.13'
-    memory: '2048'
-    vCPUs: '1'
-  - hostname: master
-    box: 'centos/7'
-    ip: '192.168.50.11'
-    memory: '2048'
-    vCPUs: '1'
+  # - hostname: bootstrap
+  #   box: 'centos/8'
+  #   ip: '192.168.50.12'
+  #   memory: '1024'
+  #   vCPUs: '1'
+  # - hostname: pfsense
+  #   box: 'centos/8'
+  #   ip: '192.168.50.12'
+  #   memory: '1024'
+  #   vCPUs: '1'
+  # - hostname: compute
+  #   box: 'centos/8'
+  #   ip: '192.168.50.13'
+  #   memory: '2048'
+  #   vCPUs: '1'
+  # - hostname: master
+  #   box: 'centos/8'
+  #   ip: '192.168.50.11'
+  #   memory: '2048'
+  #   vCPUs: '1'
 okd:
   domain: 'okd.local'
