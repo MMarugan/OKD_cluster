@@ -1,6 +1,7 @@
-# OKD_cluster
+# OKD 4 cluster
 Deploys OKD cluster using vagrant and virtualbox.  
-Installation steps are based on this [Spirited Engineering post](https://spiritedengineering.net/2019/08/05/put-red-hat-openshift-on-your-laptop-using-virtualbox-and-openshift-ansible/)
+Installation steps are based on [this](https://www.openshift.com/blog/guide-to-installing-an-okd-4-4-cluster-on-your-home-lab) and [this guide](https://itnext.io/guide-installing-an-okd-4-5-cluster-508a2631cbee?gi=bd1f22cb39a9)  
+Also some useful code in github [OKD repo](https://github.com/openshift/okd)
 
 # VMs deployment
 ## Linux:

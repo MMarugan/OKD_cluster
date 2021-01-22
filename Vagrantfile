@@ -24,7 +24,10 @@ Vagrant.configure('2') do |config|
     config.vm.define node['hostname'] do |n|
       n.vm.box      = node['box']
       n.vm.hostname = node['hostname'] + '.' + vms_config['okd']['domain']
-      n.vm.network :private_network, ip: node['ip']
+
+      node['networks'].each do |net|
+        n.vm.network :private_network, ip: net['ip']
+      end
 
       n.vm.provider :virtualbox do |vb|
         vb.memory = node['memory']
@@ -33,7 +36,7 @@ Vagrant.configure('2') do |config|
 
       n.vm.provision :hosts do |p|
         vms_config['nodes'].each do |entry|
-          p.add_host entry['ip'], [entry['hostname'] + '.' + vms_config['okd']['domain']]
+          p.add_host entry['networks'][0]['ip'], [entry['hostname'] + '.' + vms_config['okd']['domain']]
         end
       end
       n.vm.provision :shell, path: 'provision/shell/install_common.sh'
