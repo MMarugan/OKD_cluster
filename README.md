@@ -27,7 +27,7 @@ repo_path> vagrant.exe up
 NOTE: Some rsync problems have been detected with different Vagrant version than ````2.2.5````.  
 
 
-It takes long time to set up the cluster (around 20 minutes). After this, check the openshift cluster nodes with:
+It takes long time to set up the cluster (around 20 minutes). After this, it's possible to check the openshift cluster nodes with:
 
 ## Webconsole access:
 Add to the hosts file the following entry (Update it with the corresponding one if it has been changed in [config file](/config/vms.yaml) file for master node)
