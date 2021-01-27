@@ -5,6 +5,7 @@ echo "Configuring services node..."
 VAGRANT_FOLDER="/vagrant"
 BIND_CONFIG="${VAGRANT_FOLDER}/config/dns/"
 HAPROXY_CONFIG="${VAGRANT_FOLDER}/config/haproxy/"
+DHCPD_CONFIG="${VAGRANT_FOLDER}/config/dhcpd/"
 OKD_CONFIG="${VAGRANT_FOLDER}/config/okd4/"
 OKD_VERSION="4.5.0-0.okd-2020-07-29-070316"
 HTTPD_PORT="8080"
@@ -113,6 +114,45 @@ firewall-cmd --reload
 
 # Test
 curl -s http://okd4-services.okd.local:8080 -o /dev/null
+
+###############
+# DHCP Server #
+###############
+
+dnf install -y dhcp-server
+cp /etc/dhcp/dhcpd.conf /etc/dhcp/dhcpd.conf.bk
+cp "${DHCPD_CONFIG}/dhcpd.conf" /etc/dhcp/dhcpd.conf
+
+systemctl enable dhcpd
+systemctl start dhcpd
+systemctl status dhcpd
+
+firewall-cmd --add-service=dhcp --permanent
+firewall-cmd --reload
+
+###############
+# TFTP Server #
+###############
+
+dnf -y install tftp-server tftp
+systemctl enable --now tftp.socket
+systemctl enable --now tftp.service
+firewall-cmd --add-service=tftp --permanent
+firewall-cmd --reload
+
+##############
+# PXE Config #
+##############
+
+dnf install -y syslinux
+TFTP_ROOT_FOLDER="/var/lib/tftpboot/"
+SYSLINUX_SRC_FOLDER="/usr/share/syslinux/"
+PXE_FILES="pxelinux.0 menu.c32 ldlinux.c32 libutil.c32"
+for pxe_file in $(echo "${PXE_FILES}"); do
+  cp "${SYSLINUX_SRC_FOLDER}${pxe_file}" "${TFTP_ROOT_FOLDER}"
+done
+
+
 
 # ------------------------------------------------------------------
 
