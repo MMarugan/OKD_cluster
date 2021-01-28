@@ -1,0 +1,8 @@
+default menu.c32
+prompt 0
+timeout 3000
+MENU TITLE PXE Menu
+LABEL Fedora_CoreOS_32
+MENU LABEL Fedora CoreOS 32
+KERNEL images/vmlinuz
+APPEND initrd=images/initrd.img
