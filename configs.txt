@@ -1,0 +1,128 @@
+
+
+# Fedora CoreOS 32 ISO base config:
+
+label linux
+  menu label ^Fedora CoreOS (Live)
+  menu default
+  kernel /images/vmlinuz
+  append initrd=/images/initramfs.img mitigations=auto,nosmt systemd.unified_cgroup_hierarchy=0 coreos.liveiso=fedora-coreos-32.20200715.3.0 ignition.firstboot ignition.platform.id=metal
+
+-----
+initrd=/images/initramfs.img
+mitigations=auto,nosmt
+systemd.unified_cgroup_hierarchy=0
+coreos.liveiso=fedora-coreos-32.20200715.3.0
+ignition.firstboot
+ignition.platform.id=metal
+
+
+# Add to boot:
+
+#Bootstrap nodes
+coreos.inst.install_dev=/dev/sda coreos.inst.image_url=http://192.168.61.210:8080/okd4/fcos.raw.xz coreos.inst.ignition_url=http://192.168.61.210:8080/okd4/bootstrap.ign
+----
+coreos.inst.install_dev=/dev/sda
+coreos.inst.image_url=http://192.168.61.210:8080/okd4/fcos.raw.xz
+coreos.inst.ignition_url=http://192.168.61.210:8080/okd4/bootstrap.ign
+
+#Controlplane node
+coreos.inst.install_dev=/dev/sda coreos.inst.image_url=http://192.168.61.210:8080/okd4/fcos.raw.xz coreos.inst.ignition_url=http://192.168.61.210:8080/okd4/master.ign
+----
+coreos.inst.install_dev=/dev/sda
+coreos.inst.image_url=http://192.168.61.210:8080/okd4/fcos.raw.xz
+coreos.inst.ignition_url=http://192.168.61.210:8080/okd4/master.ign
+
+#Worker nodes
+coreos.inst.install_dev=/dev/sda coreos.inst.image_url=http://192.168.61.210:8080/okd4/fcos.raw.xz coreos.inst.ignition_url=http://192.168.61.210:8080/okd4/worker.ign
+----
+coreos.inst.install_dev=/dev/sda
+coreos.inst.image_url=http://192.168.61.210:8080/okd4/fcos.raw.xz
+coreos.inst.ignition_url=http://192.168.61.210:8080/okd4/worker.ign
+
+
+
+
+# Default pxe menu config:
+
+default menu.c32
+prompt 0
+timeout 3000
+MENU TITLE PXE Menu
+LABEL Fedora_CoreOS_32
+MENU LABEL Fedora CoreOS 32
+# KERNEL /networkboot/vmlinuz
+# APPEND initrd=/networkboot/initrd.img
+
+
+
+
+# Fedora Docs conf:
+
+set STREAM stable
+set VERSION 32.20200726.3.1
+set CONFIGURL https://example.com/config.ign
+
+set BASEURL https://builds.coreos.fedoraproject.org/prod/streams/${STREAM}/builds/${VERSION}/x86_64
+
+kernel ${BASEURL}/fedora-coreos-${VERSION}-live-kernel-x86_64 coreos.live.rootfs_url=${BASEURL}/fedora-coreos-${VERSION}-live-rootfs.x86_64.img ignition.firstboot ignition.platform.id=metal ignition.config.url=${CONFIGURL} systemd.unified_cgroup_hierarchy=0
+initrd ${BASEURL}/fedora-coreos-${VERSION}-live-initramfs.x86_64.img
+
+
+
+
+##############################
+##############################
+
+set STREAM stable
+#set VERSION 32.20200726.3.1
+set VERSION 32.20200715.3.0
+set CONFIGURL https://example.com/config.ign
+
+set BASEURL https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/32.20200715.3.0/x86_64
+
+kernel https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/32.20200715.3.0/x86_64/fedora-coreos-32.20200715.3.0-live-kernel-x86_64
+coreos.live.rootfs_url=https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/32.20200715.3.0/x86_64/fedora-coreos-32.20200715.3.0-live-rootfs.x86_64.img
+ignition.firstboot
+ignition.platform.id=metal
+ignition.config.url=${CONFIGURL}
+systemd.unified_cgroup_hierarchy=0
+initrd https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/32.20200715.3.0/x86_64/fedora-coreos-32.20200715.3.0-live-initramfs.x86_64.img
+
+
+##############################
+##############################
+
+kernel https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/32.20200715.3.0/x86_64/fedora-coreos-32.20200715.3.0-live-kernel-x86_64
+coreos.live.rootfs_url=https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/32.20200715.3.0/x86_64/fedora-coreos-32.20200715.3.0-live-rootfs.x86_64.img
+ignition.firstboot
+ignition.platform.id=metal
+ignition.config.url=${CONFIGURL}
+systemd.unified_cgroup_hierarchy=0
+initrd https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/32.20200715.3.0/x86_64/fedora-coreos-32.20200715.3.0-live-initramfs.x86_64.img
+
+root.squashfs
+
+KERNEL /images/vmlinuz
+APPEND initrd=/images/initramfs.img
+coreos.live.rootfs_url=/root.squashfs
+mitigations=auto,nosmt
+ignition.firstboot
+ignition.platform.id=metal
+systemd.unified_cgroup_hierarchy=0
+coreos.inst.install_dev=/dev/sda
+coreos.inst.image_url=http://192.168.61.210:8080/okd4/fcos.raw.xz
+coreos.inst.ignition_url=http://192.168.61.210:8080/okd4/bootstrap.ign
+
+
+
+APPEND initrd=/images/initramfs.img
+mitigations=auto,nosmt
+systemd.unified_cgroup_hierarchy=0
+coreos.liveiso=fedora-coreos-32.20200715.3.0
+coreos.live.rootfs_url=/root.squashfs
+ignition.firstboot
+ignition.platform.id=metal
+coreos.inst.install_dev=/dev/sda
+coreos.inst.image_url=http://192.168.61.210:8080/okd4/fcos.raw.xz
+coreos.inst.ignition_url=http://192.168.61.210:8080/okd4/bootstrap.ign
