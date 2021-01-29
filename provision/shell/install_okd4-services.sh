@@ -152,7 +152,18 @@ for pxe_file in $(echo "${PXE_FILES}"); do
   cp "${SYSLINUX_SRC_FOLDER}${pxe_file}" "${TFTP_ROOT_FOLDER}"
 done
 
+mkdir /var/lib/tftpboot/pxelinux.cfg
+cp -f /vagrant/config/pxe/default /var/lib/tftpboot/pxelinux.cfg/
 
+# mkdir /var/lib/tftpboot/iso
+# wget https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/32.20200715.3.0/x86_64/fedora-coreos-32.20200715.3.0-live.x86_64.iso
+# mv fedora-coreos-32.20200715.3.0-live.x86_64.iso /var/lib/tftpboot/iso
+# mount -o ro,loop /var/lib/tftpboot/iso/fedora-coreos-32.20200715.3.0-live.x86_64.iso /mnt
+# cp -rf /mnt/isolinux /var/lib/tftpboot/
+# cp -rf /mnt/images /var/lib/tftpboot/
+
+# dnf install -y podman
+# podman run --privileged --pull=always --rm -v .:/data -w /data quay.io/coreos/coreos-installer:release download -f pxe
 
 # ------------------------------------------------------------------
 
