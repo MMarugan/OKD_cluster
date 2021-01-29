@@ -11,8 +11,18 @@ declare -A HOSTS=(
   ["okd4-compute-2"]="fedora-coreos-32.20200715.3.0-live.x86_64-worker.iso"
 )
 
+declare -A MACS=(
+  ["okd4-bootstrap"]="001122334400"
+  ["okd4-control-plane-1"]="001122334401"
+  ["okd4-control-plane-2"]="001122334402"
+  ["okd4-control-plane-3"]="001122334403"
+  ["okd4-compute-1"]="001122334404"
+  ["okd4-compute-2"]="001122334405"
+)
+
 for host in "${!HOSTS[@]}"; do
   ISO="${ISO_BASE_PATH}${HOSTS[$host]}"
+  MAC="${MACS[$host]}"
 
   echo "------ ${host} - ${ISO} ------"
 
@@ -23,7 +33,7 @@ for host in "${!HOSTS[@]}"; do
   VBoxManage modifyvm "${host}" --audio none
   # ---
   NETNAME=$(VBoxManage list -l hostonlyifs | grep 192.168.61.1 -B 3 | grep Name | awk '{print $2}')
-  VBoxManage modifyvm "${host}" --nic1 hostonly --hostonlyadapter1 ${NETNAME} --nictype1 Am79C970A
+  VBoxManage modifyvm "${host}" --nic1 hostonly --hostonlyadapter1 "${NETNAME}" --nictype1 Am79C970A --macaddress1 "${MAC}"
   # ---
   VBoxManage createmedium disk --filename "${host}"/disk0.vdi --size 8192 --variant Standard
   DISKUUID=$(VBoxManage list hdds | grep "\/${host}\/disk0.vdi" -B 4 | grep "^UUID:" | awk '{print $2}')
