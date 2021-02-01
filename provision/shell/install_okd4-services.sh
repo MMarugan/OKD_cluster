@@ -202,10 +202,10 @@ PUB_KEY=$(cat .ssh/id_rsa.pub)
 sed -i -e '/^sshKey: .*/d' /root/install_dir/install-config.yaml
 echo "sshKey: '${PUB_KEY}'" >> /root/install_dir/install-config.yaml
 
-# Set auth and secret
-AUTH="okdcluster"
-SECRET=$(date +%s | sha256sum | base64 | head -c 64 ; echo)
-sed -i -e "s/pullSecret: '{\"auths\":{\"fake\":{\"auth\": \"bar\"}/pullSecret: '{\"auths\":{\"${AUTH}\":{\"auth\": \"${SECRET}\"}/g" install_dir/install-config.yaml
+# # Set auth and secret
+# AUTH="okdcluster"
+# SECRET=$(date +%s | sha256sum | base64 | head -c 64 ; echo)
+# sed -i -e "s/pullSecret: '{\"auths\":{\"fake\":{\"auth\": \"bar\"}/pullSecret: '{\"auths\":{\"${AUTH}\":{\"auth\": \"${SECRET}\"}/g" install_dir/install-config.yaml
 
 # Backup config file
 cp /root/install_dir/install-config.yaml /root/install_dir/install-config.yaml.bak
