@@ -9,7 +9,7 @@ if [ $? -eq 0 ]; then
   BRIDGE_IFACE=""
 else
   VBOXMANAGE="VBoxManage"
-  ISO_BASE_PATH="/var/ISO/bridged/"
+  ISO_BASE_PATH="/var/ISO/fedora_bridged/"
   BRIDGE_IFACE="enp8s0"
 fi
 
