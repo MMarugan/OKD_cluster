@@ -6,9 +6,11 @@ if [ $? -eq 0 ]; then
   VBOXMANAGE="/mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe"
   ISO_BASE_PATH="D:/OKD/ISO/"
   VM_BASE_PATH="D:/OKD/VMs/"
+  BRIDGE_IFACE=""
 else
   VBOXMANAGE="VBoxManage"
-  ISO_BASE_PATH="~/Downloads/"
+  ISO_BASE_PATH="/var/ISO/bridged/"
+  BRIDGE_IFACE="enp8s0"
 fi
 
 PFSENSE_HOST="okd4-pfsense"
@@ -75,8 +77,9 @@ for host in "${!HOSTS[@]}"; do
   "${VBOXMANAGE}" modifyvm "${host}" --vram 16 --graphicscontroller vmsvga
   "${VBOXMANAGE}" modifyvm "${host}" --audio none
   # ---
-  NETNAME=$("${VBOXMANAGE}" list -l hostonlyifs | grep 192.168.1.1 -B 3 | grep Name | awk '{print $2}')
-  "${VBOXMANAGE}" modifyvm "${host}" --nic1 hostonly --hostonlyadapter1 "${NETNAME}" --nictype1 Am79C970A --macaddress1 "${MAC}"
+  # NETNAME=$("${VBOXMANAGE}" list -l hostonlyifs | grep 192.168.61.1 -B 3 | grep Name | awk '{print $2}')
+  # "${VBOXMANAGE}" modifyvm "${host}" --nic1 hostonly --hostonlyadapter1 "${NETNAME}" --nictype1 Am79C970A --macaddress1 "${MAC}"
+  "${VBOXMANAGE}" modifyvm "${host}" --nic1 bridged --bridgeadapter1 "${BRIDGE_IFACE}" --nictype1 Am79C970A --macaddress1 "${MAC}"
   # ---
   "${VBOXMANAGE}" createmedium disk --filename "${VM_BASE_PATH}${host}-disk0.vdi" --size 16384 --variant Standard
   DISKUUID=$("${VBOXMANAGE}" list hdds | grep "${host}-disk0.vdi" -B 4 | grep "^UUID:" | awk '{print $2}')
