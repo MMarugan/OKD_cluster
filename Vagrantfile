@@ -25,20 +25,21 @@ Vagrant.configure('2') do |config|
       n.vm.box      = node['box']
       n.vm.hostname = node['hostname'] + '.' + vms_config['okd']['domain']
 
-      node['networks'].each do |net|
-        n.vm.network :private_network, ip: net['ip']
-      end
+      n.vm.network :public_network, bridge: "enp8s0", :mac => "001122334410"
+      # node['networks'].each do |net|
+      #   n.vm.network :private_network, ip: net['ip']
+      # end
 
       n.vm.provider :virtualbox do |vb|
         vb.memory = node['memory']
         vb.cpus = node['vCPUs']
       end
 
-      n.vm.provision :hosts do |p|
-        vms_config['nodes'].each do |entry|
-          p.add_host entry['networks'][0]['ip'], [entry['hostname'] + '.' + vms_config['okd']['domain']]
-        end
-      end
+      # n.vm.provision :hosts do |p|
+      #   vms_config['nodes'].each do |entry|
+      #     p.add_host entry['networks'][0]['ip'], [entry['hostname'] + '.' + vms_config['okd']['domain']]
+      #   end
+      # end
       n.vm.provision :shell, path: 'provision/shell/install_common.sh'
       n.vm.provision :shell, path: 'provision/shell/install_' + node['hostname'] + '.sh'
     end

@@ -48,8 +48,6 @@ cp ${BIND_CONFIG}named.conf.local /etc/named/
 mkdir -p /etc/named/zones
 cp ${BIND_CONFIG}db.okd.local /etc/named/zones/db.okd.local
 cp ${BIND_CONFIG}db.192.168.1 /etc/named/zones/db.192.168.1
-sed -i "s~192\.168\.1~192\.168\.1~g" /etc/named.conf /etc/named/named.conf* /etc/named/zones/db*
-sed -i "s~1.168.192.in-addr.arpa~1.168.192.in-addr.arpa~g" /etc/named.conf /etc/named/named.conf* /etc/named/zones/db*
 
 # Enable and start the local bind DNS server
 systemctl enable named
@@ -77,7 +75,6 @@ dnf install -y haproxy
 
 # Conpy ha-proxy config
 cp ${HAPROXY_CONFIG}haproxy.cfg /etc/haproxy/haproxy.cfg
-sed -i "s~192\.168\.1~192\.168\.1~g" /etc/haproxy/haproxy.cfg
 
 # Enable and verify ha-proxy
 setsebool -P haproxy_connect_any 1
@@ -113,6 +110,7 @@ firewall-cmd --permanent --add-port=${HTTPD_PORT}/tcp
 firewall-cmd --reload
 
 # Test
+echo "Testing http://okd4-services.okd.local:8080 service..."
 curl -s http://okd4-services.okd.local:8080 -o /dev/null
 
 ################
@@ -130,31 +128,33 @@ curl -s http://okd4-services.okd.local:8080 -o /dev/null
 #firewall-cmd --add-service=dhcp --permanent
 #firewall-cmd --reload
 
-###############
-# TFTP Server #
-###############
+################
+## TFTP Server #
+################
 
-dnf -y install tftp-server tftp
-systemctl enable --now tftp.socket
-systemctl enable --now tftp.service
-firewall-cmd --add-service=tftp --permanent
-firewall-cmd --reload
+#dnf -y install tftp-server tftp
+#systemctl enable --now tftp.socket
+#systemctl enable --now tftp.service
+#firewall-cmd --add-service=tftp --permanent
+#firewall-cmd --reload
 
 ##############
 # PXE Config #
 ##############
 
-dnf install -y syslinux
-TFTP_ROOT_FOLDER="/var/lib/tftpboot/"
-SYSLINUX_SRC_FOLDER="/usr/share/syslinux/"
-PXE_FILES="pxelinux.0 menu.c32 ldlinux.c32 libutil.c32"
-for pxe_file in $(echo "${PXE_FILES}"); do
-  cp "${SYSLINUX_SRC_FOLDER}${pxe_file}" "${TFTP_ROOT_FOLDER}"
-done
+# dnf install -y syslinux
+# TFTP_ROOT_FOLDER="/var/lib/tftpboot/"
+# SYSLINUX_SRC_FOLDER="/usr/share/syslinux/"
+# PXE_FILES="pxelinux.0 menu.c32 ldlinux.c32 libutil.c32"
+# for pxe_file in $(echo "${PXE_FILES}"); do
+#   cp "${SYSLINUX_SRC_FOLDER}${pxe_file}" "${TFTP_ROOT_FOLDER}"
+# done
 
-mkdir /var/lib/tftpboot/pxelinux.cfg
-cp -f /vagrant/config/pxe/default /var/lib/tftpboot/pxelinux.cfg/
+# mkdir /var/lib/tftpboot/pxelinux.cfg
+# cp -f /vagrant/config/pxe/default /var/lib/tftpboot/pxelinux.cfg/
 
+# ------------------------------------------------------------------
+# OLD
 # mkdir /var/lib/tftpboot/iso
 # wget https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/32.20200715.3.0/x86_64/fedora-coreos-32.20200715.3.0-live.x86_64.iso
 # mv fedora-coreos-32.20200715.3.0-live.x86_64.iso /var/lib/tftpboot/iso
@@ -164,7 +164,6 @@ cp -f /vagrant/config/pxe/default /var/lib/tftpboot/pxelinux.cfg/
 
 # dnf install -y podman
 # podman run --privileged --pull=always --rm -v .:/data -w /data quay.io/coreos/coreos-installer:release download -f pxe
-
 # ------------------------------------------------------------------
 
 ####################
