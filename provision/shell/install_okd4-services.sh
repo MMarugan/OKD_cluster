@@ -47,9 +47,9 @@ cp ${BIND_CONFIG}named.conf /etc/named.conf
 cp ${BIND_CONFIG}named.conf.local /etc/named/
 mkdir -p /etc/named/zones
 cp ${BIND_CONFIG}db.okd.local /etc/named/zones/db.okd.local
-cp ${BIND_CONFIG}db.192.168.1 /etc/named/zones/db.192.168.61
-sed -i "s~192\.168\.1~192\.168\.61~g" /etc/named.conf /etc/named/named.conf* /etc/named/zones/db*
-sed -i "s~1.168.192.in-addr.arpa~61.168.192.in-addr.arpa~g" /etc/named.conf /etc/named/named.conf* /etc/named/zones/db*
+cp ${BIND_CONFIG}db.192.168.1 /etc/named/zones/db.192.168.1
+sed -i "s~192\.168\.1~192\.168\.1~g" /etc/named.conf /etc/named/named.conf* /etc/named/zones/db*
+sed -i "s~1.168.192.in-addr.arpa~1.168.192.in-addr.arpa~g" /etc/named.conf /etc/named/named.conf* /etc/named/zones/db*
 
 # Enable and start the local bind DNS server
 systemctl enable named
@@ -77,7 +77,7 @@ dnf install -y haproxy
 
 # Conpy ha-proxy config
 cp ${HAPROXY_CONFIG}haproxy.cfg /etc/haproxy/haproxy.cfg
-sed -i "s~192\.168\.1~192\.168\.61~g" /etc/haproxy/haproxy.cfg
+sed -i "s~192\.168\.1~192\.168\.1~g" /etc/haproxy/haproxy.cfg
 
 # Enable and verify ha-proxy
 setsebool -P haproxy_connect_any 1
@@ -115,20 +115,20 @@ firewall-cmd --reload
 # Test
 curl -s http://okd4-services.okd.local:8080 -o /dev/null
 
-###############
-# DHCP Server #
-###############
+################
+## DHCP Server #
+################
 
-dnf install -y dhcp-server
-cp /etc/dhcp/dhcpd.conf /etc/dhcp/dhcpd.conf.bk
-cp "${DHCPD_CONFIG}/dhcpd.conf" /etc/dhcp/dhcpd.conf
+#dnf install -y dhcp-server
+#cp /etc/dhcp/dhcpd.conf /etc/dhcp/dhcpd.conf.bk
+#cp "${DHCPD_CONFIG}/dhcpd.conf" /etc/dhcp/dhcpd.conf
 
-systemctl enable dhcpd
-systemctl start dhcpd
-systemctl status dhcpd
+#systemctl enable dhcpd
+#systemctl start dhcpd
+#systemctl status dhcpd
 
-firewall-cmd --add-service=dhcp --permanent
-firewall-cmd --reload
+#firewall-cmd --add-service=dhcp --permanent
+#firewall-cmd --reload
 
 ###############
 # TFTP Server #

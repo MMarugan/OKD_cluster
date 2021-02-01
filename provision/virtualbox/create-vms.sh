@@ -42,7 +42,7 @@ declare -A MACS=(
 #   "${VBOXMANAGE}" modifyvm "${host}" --vram 16 --graphicscontroller vmsvga
 #   "${VBOXMANAGE}" modifyvm "${host}" --audio none
 #   # ---
-#   NETNAME=$("${VBOXMANAGE}" list -l hostonlyifs | grep 192.168.61.1 -B 3 | grep Name | awk '{print $2}')
+#   NETNAME=$("${VBOXMANAGE}" list -l hostonlyifs | grep 192.168.1.1 -B 3 | grep Name | awk '{print $2}')
 #   "${VBOXMANAGE}" modifyvm "${host}" --nic1 hostonly --hostonlyadapter1 "${NETNAME}" --nictype1 Am79C970A --macaddress1 "${PFSENSE_MAC}"
 #   "${VBOXMANAGE}" modifyvm "${host}" --nic2 nat --nictype2 Am79C970A
 #   # ---
@@ -75,7 +75,7 @@ for host in "${!HOSTS[@]}"; do
   "${VBOXMANAGE}" modifyvm "${host}" --vram 16 --graphicscontroller vmsvga
   "${VBOXMANAGE}" modifyvm "${host}" --audio none
   # ---
-  NETNAME=$("${VBOXMANAGE}" list -l hostonlyifs | grep 192.168.61.1 -B 3 | grep Name | awk '{print $2}')
+  NETNAME=$("${VBOXMANAGE}" list -l hostonlyifs | grep 192.168.1.1 -B 3 | grep Name | awk '{print $2}')
   "${VBOXMANAGE}" modifyvm "${host}" --nic1 hostonly --hostonlyadapter1 "${NETNAME}" --nictype1 Am79C970A --macaddress1 "${MAC}"
   # ---
   "${VBOXMANAGE}" createmedium disk --filename "${VM_BASE_PATH}${host}-disk0.vdi" --size 8192 --variant Standard

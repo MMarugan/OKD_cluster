@@ -3,13 +3,13 @@ nodes:
   - hostname: okd4-services
     box: 'centos/8'
     networks:
-      - ip: '192.168.61.210' # Internal
+      - ip: '192.168.1.210' # Internal
       - ip: '192.168.60.210' # External
     memory: '4096'
     vCPUs: '1'
 pxe_nodes:
   - hostname: okd4-bootstrap
-    ip: '192.168.61.200'
+    ip: '192.168.1.200'
     memory: '1024'
     vCPUs: '1'
 okd:

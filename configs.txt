@@ -20,25 +20,25 @@ ignition.platform.id=metal
 # Add to boot:
 
 #Bootstrap nodes
-coreos.inst.install_dev=/dev/sda coreos.inst.image_url=http://192.168.61.210:8080/okd4/fcos.raw.xz coreos.inst.ignition_url=http://192.168.61.210:8080/okd4/bootstrap.ign
+coreos.inst.install_dev=/dev/sda coreos.inst.image_url=http://192.168.1.210:8080/okd4/fcos.raw.xz coreos.inst.ignition_url=http://192.168.1.210:8080/okd4/bootstrap.ign
 ----
 coreos.inst.install_dev=/dev/sda
-coreos.inst.image_url=http://192.168.61.210:8080/okd4/fcos.raw.xz
-coreos.inst.ignition_url=http://192.168.61.210:8080/okd4/bootstrap.ign
+coreos.inst.image_url=http://192.168.1.210:8080/okd4/fcos.raw.xz
+coreos.inst.ignition_url=http://192.168.1.210:8080/okd4/bootstrap.ign
 
 #Controlplane node
-coreos.inst.install_dev=/dev/sda coreos.inst.image_url=http://192.168.61.210:8080/okd4/fcos.raw.xz coreos.inst.ignition_url=http://192.168.61.210:8080/okd4/master.ign
+coreos.inst.install_dev=/dev/sda coreos.inst.image_url=http://192.168.1.210:8080/okd4/fcos.raw.xz coreos.inst.ignition_url=http://192.168.1.210:8080/okd4/master.ign
 ----
 coreos.inst.install_dev=/dev/sda
-coreos.inst.image_url=http://192.168.61.210:8080/okd4/fcos.raw.xz
-coreos.inst.ignition_url=http://192.168.61.210:8080/okd4/master.ign
+coreos.inst.image_url=http://192.168.1.210:8080/okd4/fcos.raw.xz
+coreos.inst.ignition_url=http://192.168.1.210:8080/okd4/master.ign
 
 #Worker nodes
-coreos.inst.install_dev=/dev/sda coreos.inst.image_url=http://192.168.61.210:8080/okd4/fcos.raw.xz coreos.inst.ignition_url=http://192.168.61.210:8080/okd4/worker.ign
+coreos.inst.install_dev=/dev/sda coreos.inst.image_url=http://192.168.1.210:8080/okd4/fcos.raw.xz coreos.inst.ignition_url=http://192.168.1.210:8080/okd4/worker.ign
 ----
 coreos.inst.install_dev=/dev/sda
-coreos.inst.image_url=http://192.168.61.210:8080/okd4/fcos.raw.xz
-coreos.inst.ignition_url=http://192.168.61.210:8080/okd4/worker.ign
+coreos.inst.image_url=http://192.168.1.210:8080/okd4/fcos.raw.xz
+coreos.inst.ignition_url=http://192.168.1.210:8080/okd4/worker.ign
 
 
 
@@ -111,8 +111,8 @@ ignition.firstboot
 ignition.platform.id=metal
 systemd.unified_cgroup_hierarchy=0
 coreos.inst.install_dev=/dev/sda
-coreos.inst.image_url=http://192.168.61.210:8080/okd4/fcos.raw.xz
-coreos.inst.ignition_url=http://192.168.61.210:8080/okd4/bootstrap.ign
+coreos.inst.image_url=http://192.168.1.210:8080/okd4/fcos.raw.xz
+coreos.inst.ignition_url=http://192.168.1.210:8080/okd4/bootstrap.ign
 
 
 
@@ -124,5 +124,5 @@ coreos.live.rootfs_url=/root.squashfs
 ignition.firstboot
 ignition.platform.id=metal
 coreos.inst.install_dev=/dev/sda
-coreos.inst.image_url=http://192.168.61.210:8080/okd4/fcos.raw.xz
-coreos.inst.ignition_url=http://192.168.61.210:8080/okd4/bootstrap.ign
+coreos.inst.image_url=http://192.168.1.210:8080/okd4/fcos.raw.xz
+coreos.inst.ignition_url=http://192.168.1.210:8080/okd4/bootstrap.ign
