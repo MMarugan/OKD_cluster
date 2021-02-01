@@ -78,7 +78,7 @@ for host in "${!HOSTS[@]}"; do
   NETNAME=$("${VBOXMANAGE}" list -l hostonlyifs | grep 192.168.1.1 -B 3 | grep Name | awk '{print $2}')
   "${VBOXMANAGE}" modifyvm "${host}" --nic1 hostonly --hostonlyadapter1 "${NETNAME}" --nictype1 Am79C970A --macaddress1 "${MAC}"
   # ---
-  "${VBOXMANAGE}" createmedium disk --filename "${VM_BASE_PATH}${host}-disk0.vdi" --size 8192 --variant Standard
+  "${VBOXMANAGE}" createmedium disk --filename "${VM_BASE_PATH}${host}-disk0.vdi" --size 16384 --variant Standard
   DISKUUID=$("${VBOXMANAGE}" list hdds | grep "${host}-disk0.vdi" -B 4 | grep "^UUID:" | awk '{print $2}')
   "${VBOXMANAGE}" storagectl "${host}" --name "SATA" --add sata --controller IntelAHCI --portcount 1 --bootable on
   "${VBOXMANAGE}" storageattach "${host}" \
