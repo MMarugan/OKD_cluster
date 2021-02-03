@@ -8,7 +8,7 @@ echo "Configuring node. Common config..."
 sed -i -e '/127.0.1.1 .*\.okd\.local/d' /etc/hosts
 
 # Install Extra Packages for Enterprise Linux repo
-sudo dnf install -y epel-release
+sudo dnf install -y epel-release jq telnet tcpdump
 sudo dnf update -y
 
 # Creates ssh directory and copies ssh-keys
