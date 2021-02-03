@@ -61,6 +61,8 @@ firewall-cmd --reload
 # Point resolver to local bind server
 sed -i '/^nameserver.*$/d' /etc/resolv.conf
 echo "nameserver 127.0.0.1" >> /etc/resolv.conf
+nmcli connection modify "System eth1" ipv4.dns "127.0.0.1"
+systemctl restart NetworkManager
 
 # Test
 dig +short okd4-services.okd.local.
@@ -213,7 +215,7 @@ cp /root/install_dir/install-config.yaml /root/install_dir/install-config.yaml.b
 openshift-install create manifests --dir=install_dir/
 
 # Disable master schedulable config
-sed -i -e 's/mastersSchedulable: true/mastersSchedulable: False/' install_dir/manifests/cluster-scheduler-02-config.yml
+# sed -i -e 's/mastersSchedulable: true/mastersSchedulable: False/' install_dir/manifests/cluster-scheduler-02-config.yml
 
 openshift-install create ignition-configs --dir=install_dir/
 
