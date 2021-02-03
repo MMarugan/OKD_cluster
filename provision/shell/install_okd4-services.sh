@@ -61,8 +61,8 @@ firewall-cmd --reload
 # Point resolver to local bind server
 sed -i '/^nameserver.*$/d' /etc/resolv.conf
 echo "nameserver 127.0.0.1" >> /etc/resolv.conf
-nmcli connection modify "System eth1" ipv4.dns "127.0.0.1"
-systemctl restart NetworkManager
+# nmcli connection modify "System eth1" ipv4.dns "127.0.0.1"
+# systemctl restart NetworkManager
 
 # Test
 dig +short okd4-services.okd.local.
