@@ -4,9 +4,9 @@ uname -r | grep -qe "Microsoft$"
 if [ $? -eq 0 ]; then
   echo "Windows System found"
   VBOXMANAGE="/mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe"
-  ISO_BASE_PATH="D:/OKD/ISO/"
+  ISO_BASE_PATH="D:/OKD/ISO/fedora_bridged/"
   VM_BASE_PATH="D:/OKD/VMs/"
-  BRIDGE_IFACE=""
+  BRIDGE_IFACE="Intel(R) Ethernet Connection (6) I219-LM"
 else
   VBOXMANAGE="VBoxManage"
   ISO_BASE_PATH="/var/ISO/fedora_bridged/"
