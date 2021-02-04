@@ -2,15 +2,16 @@
 # vi: set ft=ruby :
 require 'yaml'
 
+vms_config_sshkeys_path = File.expand_path('config/sshkeys', __dir__)
+
 case ARGV[0]
 when "provision", "up"
-  if not (File.file?('./cluster_ssh_rsa.key'))
-    system("ssh-keygen -t rsa -f ./cluster_ssh_rsa.key -C node@okd -N \"\"")
+  if not (File.file?(vms_config_sshkeys_path + '/cluster_ssh_rsa.key'))
+    system ("mkdir -p " + vms_config_sshkeys_path)
+    system("ssh-keygen -t rsa -f " + vms_config_sshkeys_path + "/cluster_ssh_rsa.key -C vboxnode@k8s -N \"\"")
   else
     print "SSH key file already exists\n"
   end
-else
-  # do nothing
 end
 
 vms_config_file = File.expand_path('config/vms.yaml', __dir__)
