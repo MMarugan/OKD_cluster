@@ -15,10 +15,10 @@ controlPlane:
 
 networking:
   clusterNetwork:
-  - cidr: 10.128.0.0/14 
-    hostPrefix: 23 
+  - cidr: 10.128.0.0/14
+    hostPrefix: 23
   networkType: OpenShiftSDN
-  serviceNetwork: 
+  serviceNetwork:
   - 172.30.0.0/16
 
 platform:
@@ -26,5 +26,5 @@ platform:
 
 fips: false
 
-pullSecret: '{"auths":{"fake":{"auth": "bar"}}}' 
-sshKey: 'ssh-ed25519 AAAA...'   
+pullSecret: '{"auths":{"fake":{"auth": "bar"}}}'
+sshKey: 'ssh-ed25519 AAAA...'
