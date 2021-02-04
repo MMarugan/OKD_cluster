@@ -5,18 +5,18 @@ echo "Configuring node. Common config..."
 # Config steps from https://itnext.io/guide-installing-an-okd-4-5-cluster-508a2631cbee
 
 # Removes localhost entry for the domain name
-sed -i -e '/127.0.1.1 .*\.okd\.local/d' /etc/hosts
-
-# Install Extra Packages for Enterprise Linux repo
-sudo dnf install -y epel-release jq telnet tcpdump
-sudo dnf update -y
+sed -i -e '/127.0.0.1 .*\.okd\.local/d' /etc/hosts
 
 # Creates ssh directory and copies ssh-keys
 mkdir -p /root/.ssh
-cat /vagrant/cluster_ssh_rsa.key > /root/.ssh/id_rsa
-cat /vagrant/cluster_ssh_rsa.key.pub > /root/.ssh/id_rsa.pub
-cat /vagrant/cluster_ssh_rsa.key.pub > /root/.ssh/authorized_keys
+cat /vagrant/config/sshkeys/cluster_ssh_rsa.key > /root/.ssh/id_rsa
+cat /vagrant/config/sshkeys/cluster_ssh_rsa.key.pub > /root/.ssh/id_rsa.pub
+cat /vagrant/config/sshkeys/cluster_ssh_rsa.key.pub > /root/.ssh/authorized_keys
 chmod 600 /root/.ssh/*
+
+# Install Extra Packages for Enterprise Linux repo
+sudo dnf install -y epel-release jq telnet tcpdump net-tools
+sudo dnf update -y
 
 # Disables HostKey authentication
 cat /etc/ssh/ssh_config  | grep StrictHostKeyChecking | grep -v '^#'
