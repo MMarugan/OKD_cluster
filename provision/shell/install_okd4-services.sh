@@ -7,7 +7,10 @@ BIND_CONFIG="${VAGRANT_FOLDER}/config/dns/"
 HAPROXY_CONFIG="${VAGRANT_FOLDER}/config/haproxy/"
 DHCPD_CONFIG="${VAGRANT_FOLDER}/config/dhcpd/"
 OKD_CONFIG="${VAGRANT_FOLDER}/config/okd4/"
-OKD_VERSION="4.5.0-0.okd-2020-07-29-070316"
+#OKD_VERSION="4.5.0-0.okd-2020-07-29-070316"
+# OKD_VERSION="4.6.0-0.okd-2021-01-23-132511"
+OKD_VERSION="4.5.0-0.okd-2020-10-15-235428"
+
 HTTPD_PORT="8080"
 
 FEDORA_COREOS_VERSION="32.20200715.3.0"
@@ -40,6 +43,7 @@ systemctl status firewalld
 #######
 
 # Install DNS server
+echo "------ Installing and configuring DNS saerver (bind)..."
 dnf -y install bind bind-utils
 
 # Configure DNS server and zones
@@ -59,13 +63,19 @@ firewall-cmd --permanent --add-port=53/udp
 firewall-cmd --reload
 
 # Point resolver to local bind server
-sed -i '/^nameserver.*$/d' /etc/resolv.conf
-echo "nameserver 127.0.0.1" >> /etc/resolv.conf
+echo 'search okd.local
+nameserver 192.168.1.210' > /etc/resolv.conf
 # nmcli connection modify "System eth1" ipv4.dns "127.0.0.1"
 # systemctl restart NetworkManager
 
 # Test
+echo "------ Ip of okd4-services.okd.local:"
 dig +short okd4-services.okd.local.
+echo "------ lab.okd.local resolution:"
+dig lab.okd.local
+echo "------ Reverse resolution to 192.168.1.210"
+dig -x 192.168.1.210
+echo "------ DNS done ------"
 
 
 ############
@@ -73,6 +83,7 @@ dig +short okd4-services.okd.local.
 ############
 
 # Insatall ha-proxy
+echo "------ Installing and configuring load balacer (ha-proxy)..."
 dnf install -y haproxy
 
 # Conpy ha-proxy config
@@ -87,6 +98,7 @@ systemctl status haproxy
 # Add firewall ports
 firewall-cmd --permanent --add-port=6443/tcp
 firewall-cmd --permanent --add-port=22623/tcp
+firewall-cmd --permanent --add-port=9000/tcp # haproxy web interface
 firewall-cmd --permanent --add-service=http
 firewall-cmd --permanent --add-service=https
 firewall-cmd --reload
@@ -97,6 +109,7 @@ firewall-cmd --reload
 ##########
 
 # Install apache httpd server
+echo "------ Installing httpd server..."
 dnf install -y httpd
 
 # Replaces 80 port by 8080
@@ -112,7 +125,7 @@ firewall-cmd --permanent --add-port=${HTTPD_PORT}/tcp
 firewall-cmd --reload
 
 # Test
-echo "Testing http://okd4-services.okd.local:8080 service..."
+echo "------ Testing http://okd4-services.okd.local:8080 service..."
 curl -s http://okd4-services.okd.local:8080 -o /dev/null
 
 ################
@@ -173,10 +186,9 @@ curl -s http://okd4-services.okd.local:8080 -o /dev/null
 ####################
 
 # Install wget package
+echo "------ Getting openshift client and installer..."
 dnf install -y wget
-
 # Get OKD software
-
 mkdir -p /root/oc-temp/
 cd /root/oc-temp/
 wget -q https://github.com/openshift/okd/releases/download/${OKD_VERSION}/openshift-client-linux-${OKD_VERSION}.tar.gz
@@ -186,13 +198,15 @@ tar -zxf openshift-install-linux-${OKD_VERSION}.tar.gz
 mv kubectl oc openshift-install /usr/local/bin/
 cd ..
 rm -rf /root/oc-temp/
-
 pathmunge "/usr/local/bin/"
-
 oc version
 openshift-install version
+LINE="source <(oc completion bash)"
+grep -qsF "${LINE}" /root/.bashrc || echo "${LINE}" >> /root/.bashrc # oc completion in bash
+source <(oc completion zsh)
 
 # Copy okd config
+echo "------ Creating installation configuration..."
 cd /root
 rm -rf install_dir # Needs new config on every execution. Flush folder
 mkdir -p install_dir
@@ -204,20 +218,31 @@ sed -i -e '/^sshKey: .*/d' /root/install_dir/install-config.yaml
 echo "sshKey: '${PUB_KEY}'" >> /root/install_dir/install-config.yaml
 
 # # Set auth and secret
-# AUTH="okdcluster"
-# SECRET=$(date +%s | sha256sum | base64 | head -c 64 ; echo)
-# sed -i -e "s/pullSecret: '{\"auths\":{\"fake\":{\"auth\": \"bar\"}/pullSecret: '{\"auths\":{\"${AUTH}\":{\"auth\": \"${SECRET}\"}/g" install_dir/install-config.yaml
+# PULLSECRETS='{"auths":{"cloud.openshift.com":{"auth":...' # Get it from https://cloud.redhat.com/openshift/install/metal/user-provisioned
+# sed -i -e "s/pullSecret: '{\"auths\":{\"fake\":{\"auth\": \"bar\"}/pullSecret: ${PULLSECRETS}/g" install_dir/install-config.yaml
 
 # Backup config file
 cp /root/install_dir/install-config.yaml /root/install_dir/install-config.yaml.bak
 
 # Create manifests
+echo "------ Creating intallation manifests..."
 openshift-install create manifests --dir=install_dir/
-
-# Disable master schedulable config
-# sed -i -e 's/mastersSchedulable: true/mastersSchedulable: False/' install_dir/manifests/cluster-scheduler-02-config.yml
-
+# Disable master schedulable config (it avoids to set the worker role to master nodes)
+sed -i -e 's/mastersSchedulable: true/mastersSchedulable: False/' install_dir/manifests/cluster-scheduler-02-config.yml
 openshift-install create ignition-configs --dir=install_dir/
+
+echo "------ Setting credentials for openshift client (oc)"
+mkdir -p /root/.kube/
+cp install_dir/auth/kubeconfig /root/.kube/config
+
+echo '#!/usr/bin/env bash
+openshift-install --dir=install_dir wait-for bootstrap-complete --log-level=info' > check-deployment.sh
+chmod +x check-deployment.sh
+
+echo '#!/usr/bin/env bash
+watch -n 5 "oc get clusterversion; echo ------; oc get clusteroperators"' > check-progress.sh
+chmod +x check-progress.sh
+
 
 
 ############
@@ -225,6 +250,7 @@ openshift-install create ignition-configs --dir=install_dir/
 ############
 
 # Copy config to webserver
+echo "------ Copying ignition config to httpd..."
 rm -rf /var/www/html/okd4 # Flush content on every execution
 mkdir -p /var/www/html/okd4
 cp -R install_dir/* /var/www/html/okd4/
@@ -236,6 +262,7 @@ echo "CLUSTER METADATA:"
 curl http://okd4-services.okd.local:8080/okd4/metadata.json
 
 # Downloads Fedora CoreOS BareMetal image
+echo "------ Downloading Fedora CoreOS BareMetal images..."
 cd /var/www/html/okd4/
 wget -q https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/${FEDORA_COREOS_VERSION}/x86_64/fedora-coreos-${FEDORA_COREOS_VERSION}-metal.x86_64.raw.xz
 wget -q https://builds.coreos.fedoraproject.org/prod/streams/stable/builds/${FEDORA_COREOS_VERSION}/x86_64/fedora-coreos-${FEDORA_COREOS_VERSION}-metal.x86_64.raw.xz.sig
@@ -244,5 +271,5 @@ mv fedora-coreos-${FEDORA_COREOS_VERSION}-metal.x86_64.raw.xz.sig fcos.raw.xz.si
 chown -R apache: /var/www/html/
 chmod -R 755 /var/www/html/
 cd /root/
-
+echo "------ Done ------"
 
