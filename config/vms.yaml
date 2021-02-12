@@ -2,9 +2,8 @@
 nodes:
   - hostname: okd4-services
     box: 'centos/8'
-    networks:
-      - ip: '192.168.61.210' # Internal
-      - ip: '192.168.60.210' # External
+    network:
+      internal_ip: '192.168.61.210'
     memory: '2048'
     vCPUs: '1'
 pxe_nodes:

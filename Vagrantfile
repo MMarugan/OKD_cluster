@@ -26,10 +26,11 @@ Vagrant.configure('2') do |config|
       n.vm.box      = node['box']
       n.vm.hostname = node['hostname'] + '.' + vms_config['okd']['domain']
 
-      n.vm.network :public_network, bridge: "enp8s0", :mac => "001122334410"
-      # node['networks'].each do |net|
-      #   n.vm.network :private_network, ip: net['ip']
-      # end
+      n.vm.network :private_network, ip: node['network']['internal_ip']
+      #n.vm.network :public_network, bridge: "enp8s0", :mac => "001122334410"
+      #node['network'].each do |net|
+      #  n.vm.network :private_network, ip: net['ip']
+      #end
 
       n.vm.provider :virtualbox do |vb|
         vb.memory = node['memory']
