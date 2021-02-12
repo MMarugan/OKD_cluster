@@ -36,6 +36,17 @@ systemctl enable firewalld
 systemctl start firewalld
 systemctl status firewalld
 
+# Enable IP forwarding
+sysctl -w net.ipv4.ip_forward=1
+# Make it persistent
+sed -i -e '/^net\.ipv4\.ip_forward:/d'
+echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf
+# Create zones and masquerade settings
+firewall-cmd --zone=external --add-interface=eth0 --permanent
+firewall-cmd --zone=internal --add-interface=eth1 --permanent
+firewall-cmd --zone=external --add-masquerade --permanent
+firewall-cmd --permanent --direct --passthrough ipv4 -t nat -I POSTROUTING -o eth0 -j MASQUERADE -s 192.168.61.0/24
+firewall-cmd --complete-reload
 
 #######
 # DNS #
@@ -50,7 +61,9 @@ cp ${BIND_CONFIG}named.conf /etc/named.conf
 cp ${BIND_CONFIG}named.conf.local /etc/named/
 mkdir -p /etc/named/zones
 cp ${BIND_CONFIG}db.okd.local /etc/named/zones/db.okd.local
-cp ${BIND_CONFIG}db.192.168.1 /etc/named/zones/db.192.168.1
+cp ${BIND_CONFIG}db.192.168.1 /etc/named/zones/db.192.168.61
+sed -i "s~192\.168\.1~192\.168\.61~g" /etc/named.conf /etc/named/named.conf* /etc/named/zones/db*
+sed -i "s~1.168.192.in-addr.arpa~61.168.192.in-addr.arpa~g" /etc/named.conf /etc/named/named.conf* /etc/named/zones/db*
 
 # Enable and start the local bind DNS server
 systemctl enable named
@@ -58,12 +71,12 @@ systemctl start named
 systemctl status named
 
 # Enable firewall to receive DNS requests
-firewall-cmd --permanent --add-port=53/udp
+firewall-cmd --permanent --zone=internal --add-port=53/udp
 firewall-cmd --reload
 
 # Point resolver to local bind server
 echo 'search okd.local
-nameserver 192.168.1.210' > /etc/resolv.conf
+nameserver 192.168.61.210' > /etc/resolv.conf
 # nmcli connection modify "System eth1" ipv4.dns "127.0.0.1"
 # systemctl restart NetworkManager
 
@@ -72,8 +85,8 @@ echo "------ Ip of okd4-services.okd.local:"
 dig +short okd4-services.okd.local.
 echo "------ lab.okd.local resolution:"
 dig lab.okd.local
-echo "------ Reverse resolution to 192.168.1.210"
-dig -x 192.168.1.210
+echo "------ Reverse resolution to 192.168.61.210"
+dig -x 192.168.61.210
 echo "------ DNS done ------"
 
 
@@ -87,6 +100,7 @@ dnf install -y haproxy
 
 # Conpy ha-proxy config
 cp ${HAPROXY_CONFIG}haproxy.cfg /etc/haproxy/haproxy.cfg
+sed -i "s~192\.168\.1~192\.168\.61~g" /etc/haproxy/haproxy.cfg
 
 # Enable and verify ha-proxy
 setsebool -P haproxy_connect_any 1
@@ -95,11 +109,11 @@ systemctl start haproxy
 systemctl status haproxy
 
 # Add firewall ports
-firewall-cmd --permanent --add-port=6443/tcp
-firewall-cmd --permanent --add-port=22623/tcp
-firewall-cmd --permanent --add-port=9000/tcp # haproxy web interface
-firewall-cmd --permanent --add-service=http
-firewall-cmd --permanent --add-service=https
+firewall-cmd --permanent --zone=internal --add-port=6443/tcp
+firewall-cmd --permanent --zone=internal --add-port=22623/tcp
+firewall-cmd --permanent --zone=internal --add-port=9000/tcp # haproxy web interface
+firewall-cmd --permanent --zone=internal --add-service=http
+firewall-cmd --permanent --zone=internal --add-service=https
 firewall-cmd --reload
 
 
@@ -120,27 +134,28 @@ systemctl enable httpd
 systemctl start httpd
 
 # Adds firewall ports
-firewall-cmd --permanent --add-port=${HTTPD_PORT}/tcp
+firewall-cmd --permanent --zone=internal --add-port=${HTTPD_PORT}/tcp
 firewall-cmd --reload
 
 # Test
 echo "------ Testing http://okd4-services.okd.local:8080 service..."
 curl -s http://okd4-services.okd.local:8080 -o /dev/null
 
-################
-## DHCP Server #
-################
+###############
+# DHCP Server #
+###############
 
-#dnf install -y dhcp-server
-#cp /etc/dhcp/dhcpd.conf /etc/dhcp/dhcpd.conf.bk
-#cp "${DHCPD_CONFIG}/dhcpd.conf" /etc/dhcp/dhcpd.conf
+dnf install -y dhcp-server
+cp /etc/dhcp/dhcpd.conf /etc/dhcp/dhcpd.conf.bk
+cp "${DHCPD_CONFIG}/dhcpd.conf" /etc/dhcp/dhcpd.conf
+sed -i 's#192.168.1.#192.168.61.#g' /etc/dhcp/dhcpd.conf
 
-#systemctl enable dhcpd
-#systemctl start dhcpd
-#systemctl status dhcpd
+systemctl enable dhcpd
+systemctl start dhcpd
+systemctl status dhcpd
 
-#firewall-cmd --add-service=dhcp --permanent
-#firewall-cmd --reload
+firewall-cmd --zone=internal --add-service=dhcp --permanent
+firewall-cmd --reload
 
 ################
 ## TFTP Server #
@@ -149,7 +164,7 @@ curl -s http://okd4-services.okd.local:8080 -o /dev/null
 #dnf -y install tftp-server tftp
 #systemctl enable --now tftp.socket
 #systemctl enable --now tftp.service
-#firewall-cmd --add-service=tftp --permanent
+#firewall-cmd --zone=internal --add-service=tftp --permanent
 #firewall-cmd --reload
 
 ##############
