@@ -4,12 +4,14 @@ uname -r | grep -qe "Microsoft$"
 if [ $? -eq 0 ]; then
   echo "Windows System found"
   VBOXMANAGE="/mnt/c/Program Files/Oracle/VirtualBox/VBoxManage.exe"
-  ISO_BASE_PATH="D:/OKD/ISO/fedora_bridged/"
+  #ISO_BASE_PATH="D:/OKD/ISO/fedora_bridged/"
+  ISO_BASE_PATH="D:/OKD/ISO/fedora_hostnet/"
   VM_BASE_PATH="D:/OKD/VMs/"
   BRIDGE_IFACE="Intel(R) Ethernet Connection (6) I219-LM"
 else
   VBOXMANAGE="VBoxManage"
-  ISO_BASE_PATH="/var/ISO/fedora_bridged/"
+  #ISO_BASE_PATH="/var/ISO/fedora_bridged/"
+  ISO_BASE_PATH="/var/ISO/fedora_hostnet/"
   BRIDGE_IFACE="enp8s0"
 fi
 
@@ -34,7 +36,7 @@ declare -A MACS=(
 
 declare -A MEMORY=(
   ["okd4-bootstrap"]="4096"
-  ["okd4-control-plane-1"]="15000"
+  ["okd4-control-plane-1"]="20000"
   ["okd4-compute-1"]="5096"
   ["okd4-compute-2"]="5096"
 )
@@ -61,9 +63,12 @@ for host in "${!HOSTS[@]}"; do
   "${VBOXMANAGE}" modifyvm "${host}" --vram 16 --graphicscontroller vmsvga
   "${VBOXMANAGE}" modifyvm "${host}" --audio none
   # ---
-  # NETNAME=$("${VBOXMANAGE}" list -l hostonlyifs | grep 192.168.61.1 -B 3 | grep Name | awk '{print $2}')
-  # "${VBOXMANAGE}" modifyvm "${host}" --nic1 hostonly --hostonlyadapter1 "${NETNAME}" --nictype1 Am79C970A --macaddress1 "${MAC}"
-  "${VBOXMANAGE}" modifyvm "${host}" --nic1 bridged --bridgeadapter1 "${BRIDGE_IFACE}" --nictype1 Am79C970A --macaddress1 "${MAC}"
+  NETNAME=$("${VBOXMANAGE}" list -l hostonlyifs | grep 192.168.61.1 -B 3 | grep Name | awk -F: '{print $2}' | sed -e 's/^ *//g' -e 's/\r//g')
+  echo "NETNAME:-${NETNAME}-"
+  COMMAND="\"${VBOXMANAGE}\" modifyvm ${host} --nic1 hostonly --hostonlyadapter1 '${NETNAME}' --nictype1 Am79C970A --macaddress1 ${MAC}"
+  echo "COMMAND:${COMMAND}"
+  eval ${COMMAND}
+  #"${VBOXMANAGE}" modifyvm "${host}" --nic1 bridged --bridgeadapter1 "${BRIDGE_IFACE}" --nictype1 Am79C970A --macaddress1 "${MAC}"
   # ---
   "${VBOXMANAGE}" createmedium disk --filename "${VM_BASE_PATH}${host}-disk0.vdi" --size 16384 --variant Standard
   DISKUUID=$("${VBOXMANAGE}" list hdds | grep "${host}-disk0.vdi" -B 4 | grep "^UUID:" | awk '{print $2}')
