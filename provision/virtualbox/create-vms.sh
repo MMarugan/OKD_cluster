@@ -34,16 +34,16 @@ declare -A MACS=(
 
 declare -A MEMORY=(
   ["okd4-bootstrap"]="4096"
-  ["okd4-control-plane-1"]="8192"
-  ["okd4-compute-1"]="4096"
-  ["okd4-compute-2"]="4096"
+  ["okd4-control-plane-1"]="15000"
+  ["okd4-compute-1"]="5096"
+  ["okd4-compute-2"]="5096"
 )
 
 declare -A CPU=(
   ["okd4-bootstrap"]="2"
-  ["okd4-control-plane-1"]="2"
-  ["okd4-compute-1"]="2"
-  ["okd4-compute-2"]="2"
+  ["okd4-control-plane-1"]="4"
+  ["okd4-compute-1"]="4"
+  ["okd4-compute-2"]="4"
 )
 
 # Create fedora hosts

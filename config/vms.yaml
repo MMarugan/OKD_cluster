@@ -5,7 +5,7 @@ nodes:
     networks:
       - ip: '192.168.61.210' # Internal
       - ip: '192.168.60.210' # External
-    memory: '4096'
+    memory: '2048'
     vCPUs: '1'
 pxe_nodes:
   - hostname: okd4-bootstrap
